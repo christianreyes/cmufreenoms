@@ -14,13 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+import os
+from google.appengine.ext import db
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
+from google.appengine.ext.webapp import template
 
 
 class MainHandler(webapp.RequestHandler):
     def get(self):
-        self.response.out.write('Hello world!')
+		path = templatePath('views/index.html')
+		template_values = {}
+		self.response.out.write(template.render(path,template_values))
 
 
 def main():
@@ -28,6 +34,9 @@ def main():
                                          debug=True)
     util.run_wsgi_app(application)
 
+
+def templatePath(path):
+    return os.path.join(os.path.dirname(__file__), path)
 
 if __name__ == '__main__':
     main()
