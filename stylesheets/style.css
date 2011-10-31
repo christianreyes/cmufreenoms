@@ -1,4 +1,22 @@
+*
+{
+	cursor: url("../images/rageface.cur");
+}
+
 body
 {
 	font-family: Sans-Serif;
+	color: white;
+	background-color: #333;
+}
+
+#frame
+{
+	width: 600px;
+	margin: 0 auto;
+}
+
+.greenNom
+{
+	color: green;
 }
