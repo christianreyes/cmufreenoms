@@ -1,13 +1,6 @@
-*
-{
-	cursor: url("../images/rageface.cur");
-}
-
 body
 {
 	font-family: Sans-Serif;
-	color: white;
-	background-color: #333;
 }
 
 #frame
@@ -16,7 +9,7 @@ body
 	margin: 0 auto;
 }
 
-.greenNom
+table
 {
-	color: green;
+	width: 100%;
 }

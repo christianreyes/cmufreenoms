@@ -16,24 +16,40 @@
 #
 
 import os
+import cgi
 from google.appengine.ext import db
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 from google.appengine.ext.webapp import template
 
-
+class Report(db.Model):
+    type = db.StringProperty()
+    location = db.StringProperty()
+    date = db.DateTimeProperty(auto_now_add = True)
+	
 class MainHandler(webapp.RequestHandler):
     def get(self):
+		reports = Report.all().fetch(100)
+	
 		path = templatePath('views/index.html')
-		template_values = {}
+		template_values = {"reports": reports}
 		self.response.out.write(template.render(path,template_values))
 
+class ReportHandler(webapp.RequestHandler):
+	def get(self):
+		rtype = cgi.escape(self.request.get("type"))
+		rlocation = cgi.escape(self.request.get("location"))
+		
+		report = Report(type = rtype, location = rlocation)
+		report.put()
 
 def main():
-    application = webapp.WSGIApplication([('/', MainHandler)],
-                                         debug=True)
-    util.run_wsgi_app(application)
-
+	routes = [
+	          ('/', MainHandler), 
+	          ('/report', ReportHandler)
+	         ]
+	application = webapp.WSGIApplication(routes, debug=True)
+	util.run_wsgi_app(application)
 
 def templatePath(path):
     return os.path.join(os.path.dirname(__file__), path)

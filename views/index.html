@@ -9,8 +9,35 @@
 <body>
 	<div id="frame">
 		<h1>Free Noms!</h1>
-		<h2>Use mouse to eat noms!</h2>
-		<p id="noms"></p>
+		<div>
+			<h2>Report Free Noms</h2>
+			<form action="/report" method="get">
+				<label for="type"/>Type:</label>
+				<input id="type" type="text" name="type"/>
+			
+				<label for="location"/>Location:</label>
+				<input id="location" type="text" name="location"/>
+			
+				<input id="submit" type="submit" value="Report!">
+			</form>
+		</div>
+		<div>
+			<h2>Reported Noms</h2>
+			<table>
+				<tr>
+					<th>Type</th>
+					<th>Location</th>
+					<th>Date</th>
+				</tr>
+				{% for report in reports %}
+					<tr>
+						<td>{{ report.type }}</td>
+						<td>{{ report.location }}</td>
+						<td>{{ report.date }}</td>
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
 	</div>
 </body>
 </html>
