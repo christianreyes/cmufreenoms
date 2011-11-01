@@ -7,9 +7,9 @@
 	<link href="/stylesheets/style.css" type="text/css" rel="stylesheet">
 </head>
 <body>
-	<div id="frame">
+	<div class="frame">
 		<h1>Free Noms!</h1>
-		<div>
+		<div class="report">
 			<h2>Report Free Noms</h2>
 			<form action="/report" method="get">
 				<label for="type"/>Type:</label>
@@ -21,19 +21,19 @@
 				<input id="submit" type="submit" value="Report!">
 			</form>
 		</div>
-		<div>
-			<h2>Reported Noms</h2>
+		<div class="find">
+			<h2>Find Free Noms</h2>
 			<table>
 				<tr>
 					<th>Type</th>
 					<th>Location</th>
-					<th>Date</th>
+					<th>Time</th>
 				</tr>
 				{% for report in reports %}
 					<tr>
 						<td>{{ report.type }}</td>
 						<td>{{ report.location }}</td>
-						<td>{{ report.date }}</td>
+						<td>{{ report.date|date:"f A" }}</td>
 					</tr>
 				{% endfor %}
 			</table>

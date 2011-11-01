@@ -15,8 +15,10 @@
 # limitations under the License.
 #
 
-import os
 import cgi
+import datetime
+import os
+import time
 from google.appengine.ext import db
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
@@ -32,7 +34,7 @@ class MainHandler(webapp.RequestHandler):
 		reports = Report.all().fetch(100)
 	
 		path = templatePath('views/index.html')
-		template_values = {"reports": reports}
+		template_values = { "reports": reports }
 		self.response.out.write(template.render(path,template_values))
 
 class ReportHandler(webapp.RequestHandler):
@@ -42,8 +44,10 @@ class ReportHandler(webapp.RequestHandler):
 		
 		report = Report(type = rtype, location = rlocation)
 		report.put()
+		self.redirect("/")
 
 def main():
+	os.environ['TZ'] = 'US/Eastern'
 	routes = [
 	          ('/', MainHandler), 
 	          ('/report', ReportHandler)
@@ -53,6 +57,12 @@ def main():
 
 def templatePath(path):
     return os.path.join(os.path.dirname(__file__), path)
-
+    
+def dateToTime(date):
+	if d:
+		return date.strftime('%d/%m/%y')
+	else:
+		return ""
+    
 if __name__ == '__main__':
     main()

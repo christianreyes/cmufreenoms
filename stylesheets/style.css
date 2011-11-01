@@ -1,15 +1,53 @@
-body
-{
+@import url('reset.css');
+
+html, body {
+	height: 100%;
+}
+
+body {
 	font-family: Sans-Serif;
+	/*
+	background: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 350, from(#E8904A), to(#FFB751));
+	*/
 }
 
-#frame
-{
-	width: 600px;
+div.frame {
+	width: 700px;
 	margin: 0 auto;
+	padding: 10px;
 }
 
-table
-{
+h1, h2 {
+	margin: 10px 0;
+}
+
+h1 {
+	text-align: center;
+	font-size: 2em;
+}
+
+h2 {
+	font-size: 1.5em;
+}
+
+div.report {
+	border: 1px solid black;
+	background-color: #E4FFFE;
+	padding: 12px;
+}
+
+div.find {
+	margin-top: 5px;
+	border: 1px solid black;
+	background-color: #E2FFE7;
+	padding: 12px;
+}
+
+table {
 	width: 100%;
+}
+
+th {
+	font-weight: bold;
+	border-bottom: 1px solid black;
 }
