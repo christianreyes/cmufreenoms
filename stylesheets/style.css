@@ -11,8 +11,25 @@ body {
 	*/
 }
 
+.shadow {
+  -moz-box-shadow: 3px 3px 3px #ccc;
+  -webkit-box-shadow: 3px 3px 3px #ccc;
+  box-shadow: 3px 3px 3px #ccc;
+}
+
+label {
+	width: 90px;
+	display: inline-block;
+	margin-bottom: 15px;
+}
+
+input[type=text]{
+	display: inline-block;
+	height: 25px;
+}
+
 div.frame {
-	width: 700px;
+	width: 550px;
 	margin: 0 auto;
 	padding: 10px;
 }
@@ -43,11 +60,25 @@ div.find {
 	padding: 12px;
 }
 
-table {
-	width: 100%;
+div.find > div {
+	min-height: 45px;
+	border: 1px solid black;
+	margin-bottom: 10px;
+	padding: 5px;
+	background-color: #F2FFF7;
+	-webkit-border-radius: 7px;
+	-moz-border-radius: 7px;
+	border-radius: 7px;
 }
 
-th {
+div.find > div > span:nth-child(-n+2) { 
 	font-weight: bold;
-	border-bottom: 1px solid black;
+}
+
+div.find > div > span:nth-child(2) { 
+	float: right;
+}
+
+div.find > div > p { 
+	margin-top: 5px;
 }

@@ -12,31 +12,28 @@
 		<div class="report">
 			<h2>Report Free Noms</h2>
 			<form action="/report" method="get">
-				<label for="type"/>Type:</label>
-				<input id="type" type="text" name="type"/>
-			
-				<label for="location"/>Location:</label>
-				<input id="location" type="text" name="location"/>
-			
+				<div>
+					<label for="type"/>Description:</label>
+					<input id="type" type="text" name="type"/>
+				</div>
+				<div>
+					<label for="location"/>Location:</label>
+					<input id="location" type="text" name="location"/>
+				</div>
 				<input id="submit" type="submit" value="Report!">
 			</form>
 		</div>
 		<div class="find">
-			<h2>Find Free Noms</h2>
-			<table>
-				<tr>
-					<th>Type</th>
-					<th>Location</th>
-					<th>Time</th>
-				</tr>
-				{% for report in reports %}
-					<tr>
-						<td>{{ report.type }}</td>
-						<td>{{ report.location }}</td>
-						<td>{{ report.date|date:"f A" }}</td>
-					</tr>
-				{% endfor %}
-			</table>
+			<h2>Noms</h2>
+			
+			{% for report in reports %}
+			<div class="shadow">
+				<span>{{ report.location }}</span>
+				<span>{{ report.date|date:"f A" }}</span>
+				<p>{{ report.type }}</p>
+			</div>
+			{% endfor %}
+			
 		</div>
 	</div>
 </body>

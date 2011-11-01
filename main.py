@@ -19,6 +19,9 @@ import cgi
 import datetime
 import os
 import time
+from pytz import timezone
+import pytz
+from pytz import gae
 from google.appengine.ext import db
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
@@ -31,7 +34,13 @@ class Report(db.Model):
 	
 class MainHandler(webapp.RequestHandler):
     def get(self):
-		reports = Report.all().fetch(100)
+		twenty_four_hours =  datetime.datetime.now() - datetime.timedelta(days=1)
+		reports = Report.all().filter('date >=', twenty_four_hours).order("-date").fetch(1000)
+		
+		if reports:
+			for report in reports:
+				EST = timezone('US/Eastern')
+				report.date = fromUTC(report.date.replace(tzinfo=EST), 'US/Eastern' )
 	
 		path = templatePath('views/index.html')
 		template_values = { "reports": reports }
@@ -47,7 +56,6 @@ class ReportHandler(webapp.RequestHandler):
 		self.redirect("/")
 
 def main():
-	os.environ['TZ'] = 'US/Eastern'
 	routes = [
 	          ('/', MainHandler), 
 	          ('/report', ReportHandler)
@@ -58,11 +66,26 @@ def main():
 def templatePath(path):
     return os.path.join(os.path.dirname(__file__), path)
     
-def dateToTime(date):
-	if d:
-		return date.strftime('%d/%m/%y')
-	else:
-		return ""
+# "US/Eastern"
+def toUTC(date,tz):
+    tz = timezone(tz)
+    utc = pytz.timezone('UTC')
+    d_tz = tz.normalize(tz.localize(date))
+    d_utc = d_tz.astimezone(utc)
+    return d_utc
+
+def fromUTC(date,tz):
+    tz = timezone(tz)
+    utc = pytz.timezone('UTC')
+    d_tz = utc.normalize(date)
+    localetime = d_tz.astimezone(tz)
+    return localetime
+
+def convert2EST(date, time, tzone):
+    dt = datetime.datetime.strptime(date+time, '%Y%m%d%H:%M:%S')
+    tz = pytz.timezone(tzone)
+    dt = tz.localize(dt)
+    return dt.astimezone(EST)
     
 if __name__ == '__main__':
     main()
