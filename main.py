@@ -23,6 +23,7 @@ from pytz import timezone
 import pytz
 from pytz import gae
 from google.appengine.ext import db
+from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 from google.appengine.ext.webapp import template
@@ -34,6 +35,17 @@ class Report(db.Model):
 	
 class MainHandler(webapp.RequestHandler):
     def get(self):
+		template_values = {}
+	
+		user = users.get_current_user()
+		
+		if user:
+			template_values["user_nickname"] = user.nickname()
+			template_values["logout_url"] = users.create_logout_url(self.request.uri)
+		else: 
+			#self.redirect(users.create_login_url(self.request.uri))
+			template_values["login_url"] = users.create_login_url(self.request.uri)
+	
 		twenty_four_hours =  datetime.datetime.now() - datetime.timedelta(days=1)
 		reports = Report.all().filter('date >=', twenty_four_hours).order("-date").fetch(1000)
 		
@@ -43,7 +55,7 @@ class MainHandler(webapp.RequestHandler):
 				report.date = fromUTC(report.date.replace(tzinfo=EST), 'US/Eastern' )
 	
 		path = templatePath('views/index.html')
-		template_values = { "reports": reports }
+		template_values["reports"] = reports 
 		self.response.out.write(template.render(path,template_values))
 
 class ReportHandler(webapp.RequestHandler):

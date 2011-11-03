@@ -9,6 +9,12 @@
 <body>
 	<div class="frame">
 		<h1>Free Noms!</h1>
+		{% if user_nickname %}
+			<span class="nickname">{{ user_nickname }}</span>
+			<a class="logout" href={{ logout_url }}>Logout</a>
+		{% else %}
+			<a class="login" href={{ login_url }}>Login</a>
+		{% endif %}
 		<div class="report">
 			<h2>Report Free Noms</h2>
 			<form action="/report" method="get">
