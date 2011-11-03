@@ -32,45 +32,64 @@ class Report(db.Model):
     type = db.StringProperty()
     location = db.StringProperty()
     date = db.DateTimeProperty(auto_now_add = True)
+
+def basePrepPage(request):
+	template_values = {}
+
+	user = users.get_current_user()
 	
+	if user:
+		template_values["user_nickname"] = user.nickname()
+		template_values["logout_url"] = users.create_logout_url(request.uri)
+	else: 
+		template_values["login_url"] = users.create_login_url(request.uri)
+		
+	return template_values
+
 class MainHandler(webapp.RequestHandler):
     def get(self):
-		template_values = {}
+		template_values = basePrepPage(self.request)
 	
-		user = users.get_current_user()
-		
-		if user:
-			template_values["user_nickname"] = user.nickname()
-			template_values["logout_url"] = users.create_logout_url(self.request.uri)
-		else: 
-			#self.redirect(users.create_login_url(self.request.uri))
-			template_values["login_url"] = users.create_login_url(self.request.uri)
-	
-		twenty_four_hours =  datetime.datetime.now() - datetime.timedelta(days=1)
-		reports = Report.all().filter('date >=', twenty_four_hours).order("-date").fetch(1000)
-		
-		if reports:
-			for report in reports:
-				EST = timezone('US/Eastern')
-				report.date = fromUTC(report.date.replace(tzinfo=EST), 'US/Eastern' )
-	
-		path = templatePath('views/index.html')
-		template_values["reports"] = reports 
+		path = templatePath('views/home.html')
 		self.response.out.write(template.render(path,template_values))
 
 class ReportHandler(webapp.RequestHandler):
 	def get(self):
+		template_values = basePrepPage(self.request)
+
+		path = templatePath('views/report.html')
+		self.response.out.write(template.render(path,template_values))
+		
+	def post(self):
 		rtype = cgi.escape(self.request.get("type"))
 		rlocation = cgi.escape(self.request.get("location"))
 		
 		report = Report(type = rtype, location = rlocation)
 		report.put()
-		self.redirect("/")
+		self.redirect("/find")
+		
+class FindHandler(webapp.RequestHandler):
+    def get(self):
+		template_values = basePrepPage(self.request)
+
+		twenty_four_hours =  datetime.datetime.now() - datetime.timedelta(days=1)
+		reports = Report.all().filter('date >=', twenty_four_hours).order("-date").fetch(1000)
+
+		if reports:
+			for report in reports:
+				EST = timezone('US/Eastern')
+				report.date = fromUTC(report.date.replace(tzinfo=EST), 'US/Eastern' )
+	
+		template_values["reports"] = reports
+
+		path = templatePath('views/find.html')
+		self.response.out.write(template.render(path,template_values))
 
 def main():
 	routes = [
 	          ('/', MainHandler), 
-	          ('/report', ReportHandler)
+	          ('/report', ReportHandler),
+              ('/find', FindHandler)
 	         ]
 	application = webapp.WSGIApplication(routes, debug=True)
 	util.run_wsgi_app(application)

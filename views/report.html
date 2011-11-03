@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="report">
+	<h2>Report Free Noms</h2>
+	<form action="/report" method="post">
+		<div>
+			<label for="type"/>Description:</label>
+			<input id="type" type="text" name="type"/>
+		</div>
+		<div>
+			<label for="location"/>Location:</label>
+			<input id="location" type="text" name="location"/>
+		</div>
+		<input id="submit" type="submit" value="Report!">
+	</form>
+</div>
+{% endblock %}

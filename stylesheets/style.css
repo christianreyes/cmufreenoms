@@ -76,12 +76,6 @@ a.logout {
 	color: white;
 }
 
-.shadow {
-  -moz-box-shadow: 3px 3px 3px #ccc;
-  -webkit-box-shadow: 3px 3px 3px #ccc;
-  box-shadow: 3px 3px 3px #ccc;
-}
-
 #menu_container{
   height: 30px;
   background-color: white;
@@ -163,28 +157,44 @@ h2 {
 	font-size: 1.5em;
 }
 
+img.instructions {
+	float: left;
+	width: 49%;
+	margin-left: 4px;
+	opacity: .7;
+}
+
+img.instructions:hover {
+	opacity: 1;
+	outline: 2px solid #333;
+}
+
 div.report {
-	border: 1px solid black;
-	background-color: #E4FFFE;
+	border: 1px solid #ddd;
 	padding: 12px;
 }
 
 div.find {
 	margin-top: 5px;
-	border: 1px solid black;
-	background-color: #E2FFE7;
+	border: 1px solid #ddd;
 	padding: 12px;
 }
 
 div.find > div {
 	min-height: 45px;
-	border: 1px solid black;
+	border: 1px solid #ddd;
 	margin-bottom: 10px;
 	padding: 5px;
-	background-color: #F2FFF7;
-	-webkit-border-radius: 7px;
-	-moz-border-radius: 7px;
-	border-radius: 7px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0.06, rgb(242,239,242)),
+		color-stop(0.53, rgb(252,252,252))
+	);
 }
 
 span.location, span.time{
@@ -193,6 +203,7 @@ span.location, span.time{
 
 span.date{
 	margin-right: 10px;
+	font-weight: lighter;
 }
 
 span.date, span.time{
