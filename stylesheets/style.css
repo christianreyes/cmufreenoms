@@ -1,14 +1,9 @@
 @import url('reset.css');
 
 html, body {
-	height: 100%;
-}
-
-body {
+	margin: 0;
+	padding: 0;
 	font-family: Sans-Serif;
-	/*
-	background: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 350, from(#E8904A), to(#FFB751));
-	*/
 }
 
 a {
@@ -21,27 +16,55 @@ a:hover {
 	text-decoration: underline;
 }
 
-div.header {
+div#header_container {
+	width: 100%;
+	height: 100px;
+	background-color: #333;
+}
+
+div#header {
+	color: white;
+	margin: 0 auto;
+	height: 100px;
+	width: 600px;
 	position: relative;
 }
 
-span.user_info {
+div#header h1{
+	padding-top: 20px;
+	padding-bottom: 5px;
+}
+
+div#header span#definition{
+	font-weight: lighter;
+	font-size: smaller;
+	width: 260px;
+	display: block;
+}
+
+div#header span#word{
+	font-weight: bold;
+}
+
+div#header span.italic{
+	font-style: italic;
+}
+
+span.user_info, a.login {
 	position: absolute;
-	bottom: 7px;
+	bottom: 40px;
 	right: 10px;
+	color: white;
 }
 
 span.separator {
-	color: gray;
 	margin-left: 2px;
 	margin-right: 2px;
 	font-size: smaller;
 }
 
-a.login{
-	position: absolute;
-	bottom: 8px;
-	right: 10px;
+a.logout {
+	color: white;
 }
 
 .shadow {
@@ -62,12 +85,12 @@ input[type=text]{
 }
 
 div.frame {
-	width: 550px;
+	width: 600px;
 	margin: 0 auto;
 	padding: 10px;
 }
 
-h1, h2 {
+h2 {
 	margin: 10px 0;
 }
 
