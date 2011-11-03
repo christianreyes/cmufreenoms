@@ -22,6 +22,15 @@ div#header_container {
 	background-color: #333;
 }
 
+h1 a{
+	color: white;
+}
+
+h1 a:hover{
+	text-decoration: none;
+	color: white;
+}
+
 div#header {
 	color: white;
 	margin: 0 auto;
