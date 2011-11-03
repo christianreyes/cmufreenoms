@@ -8,13 +8,18 @@
 </head>
 <body>
 	<div class="frame">
-		<h1>Free Noms!</h1>
+		<div class="header">
+			<h1>Free Noms!</h1>
 		{% if user_nickname %}
-			<span class="nickname">{{ user_nickname }}</span>
-			<a class="logout" href={{ logout_url }}>Logout</a>
+			<span class="user_info">
+				<span class="nickname">{{ user_nickname }}</span>
+				<span class="separator">|</span>
+				<a class="logout" href={{ logout_url }}>log out</a>
+			</span>
 		{% else %}
-			<a class="login" href={{ login_url }}>Login</a>
+			<a class="login" href={{ login_url }}>login</a>
 		{% endif %}
+		</div>
 		<div class="report">
 			<h2>Report Free Noms</h2>
 			<form action="/report" method="get">
@@ -34,8 +39,9 @@
 			
 			{% for report in reports %}
 			<div class="shadow">
-				<span>{{ report.location }}</span>
-				<span>{{ report.date|date:"f A" }}</span>
+				<span class="location">{{ report.location }}</span>
+				<span class="time">{{ report.date|date:"f A" }}</span>
+				<span class="date">{{ report.date|date:"M j"}}</span>
 				<p>{{ report.type }}</p>
 			</div>
 			{% endfor %}

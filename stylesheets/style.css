@@ -11,6 +11,39 @@ body {
 	*/
 }
 
+a {
+	text-decoration: none;
+	color: black;
+}
+
+a:hover {
+	color: blue;
+	text-decoration: underline;
+}
+
+div.header {
+	position: relative;
+}
+
+span.user_info {
+	position: absolute;
+	bottom: 7px;
+	right: 10px;
+}
+
+span.separator {
+	color: gray;
+	margin-left: 2px;
+	margin-right: 2px;
+	font-size: smaller;
+}
+
+a.login{
+	position: absolute;
+	bottom: 8px;
+	right: 10px;
+}
+
 .shadow {
   -moz-box-shadow: 3px 3px 3px #ccc;
   -webkit-box-shadow: 3px 3px 3px #ccc;
@@ -39,7 +72,7 @@ h1, h2 {
 }
 
 h1 {
-	text-align: center;
+	text-align: left;
 	font-size: 2em;
 }
 
@@ -71,11 +104,15 @@ div.find > div {
 	border-radius: 7px;
 }
 
-div.find > div > span:nth-child(-n+2) { 
+span.location, span.time{
 	font-weight: bold;
 }
 
-div.find > div > span:nth-child(2) { 
+span.date{
+	margin-right: 10px;
+}
+
+span.date, span.time{
 	float: right;
 }
 
