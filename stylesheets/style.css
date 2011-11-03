@@ -175,9 +175,18 @@ div.report {
 }
 
 div.find {
+	position: relative;
 	margin-top: 5px;
 	border: 1px solid #ddd;
 	padding: 12px;
+}
+
+input#search_box {
+	position: absolute;
+	right: 12px;
+	top: 20px;
+	width: 200px;
+	-webkit-border-radius: 3px;
 }
 
 div.find > div {

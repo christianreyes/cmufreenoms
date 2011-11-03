@@ -2,7 +2,9 @@
 {% block content %}
 <div class="find">
 	<h2>Noms</h2>
-	
+	<form id="find_search" >
+		<input id="search_box" type="text">
+	</form>
 	{% for report in reports %}
 	<div>
 		<span class="location">{{ report.location }}</span>
