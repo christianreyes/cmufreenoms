@@ -180,13 +180,18 @@ div.find {
 	border: 1px solid #ddd;
 	padding: 12px;
 }
-
+ 
 input#search_box {
 	position: absolute;
 	right: 12px;
 	top: 20px;
 	width: 200px;
 	-webkit-border-radius: 3px;
+} 
+
+ul.token-input-list {
+	width: 200px;
+	display: inline-block;
 }
 
 div.find > div {

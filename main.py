@@ -18,20 +18,34 @@
 import cgi
 import datetime
 import os
+import re
 import time
 from pytz import timezone
 import pytz
 from pytz import gae
+from django.utils import simplejson
 from google.appengine.ext import db
 from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 from google.appengine.ext.webapp import template
 
+class Food(db.Model):
+    name = db.StringProperty()
+
 class Report(db.Model):
-    type = db.StringProperty()
-    location = db.StringProperty()
-    date = db.DateTimeProperty(auto_now_add = True)
+	description = db.StringProperty()
+	location = db.StringProperty()
+	date = db.DateTimeProperty(auto_now_add = True)
+	user = db.UserProperty()
+
+class Spotted(db.Model):
+	food = db.ReferenceProperty(Food,
+	                            required=False,
+	                            collection_name="reports")
+	report = db.ReferenceProperty(Report,
+	                              required=False,
+	                              collection_name="foods")
 
 def basePrepPage(request):
 	template_values = {}
@@ -61,10 +75,13 @@ class ReportHandler(webapp.RequestHandler):
 		self.response.out.write(template.render(path,template_values))
 		
 	def post(self):
-		rtype = cgi.escape(self.request.get("type"))
-		rlocation = cgi.escape(self.request.get("location"))
+		description = cgi.escape(self.request.get("description"))
+		location = cgi.escape(self.request.get("location"))
+		user = users.get_current_user()
 		
-		report = Report(type = rtype, location = rlocation)
+		report = Report(description = description, 
+		                location = location, 
+		                user = user)
 		report.put()
 		self.redirect("/find")
 		
@@ -84,12 +101,28 @@ class FindHandler(webapp.RequestHandler):
 
 		path = templatePath('views/find.html')
 		self.response.out.write(template.render(path,template_values))
+		
+class FoodsJSONHandler(webapp.RequestHandler):
+    def get(self):
+		query = self.request.query_string[2:].lower()
+		
+		foods = Food.all().order("name").fetch(1000)
+		
+		to_json = []
+		
+		for food in foods:
+			if(query == "" or re.match(query, food.name.lower())):
+				to_json.append({ "id" : food.key().id() , "name" : food.name})
+		
+		self.response.headers['Content-Type'] = 'application/json'
+		self.response.out.write(simplejson.dumps(to_json))
 
 def main():
 	routes = [
 	          ('/', MainHandler), 
 	          ('/report', ReportHandler),
-              ('/find', FindHandler)
+              ('/find', FindHandler),
+              ('/foods.json', FoodsJSONHandler)
 	         ]
 	application = webapp.WSGIApplication(routes, debug=True)
 	util.run_wsgi_app(application)
