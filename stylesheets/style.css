@@ -181,7 +181,7 @@ div.find {
 	padding: 12px;
 }
  
-input#search_box {
+input#find_search_box {
 	position: absolute;
 	right: 12px;
 	top: 20px;
@@ -194,7 +194,7 @@ ul.token-input-list {
 	display: inline-block;
 }
 
-div.find > div {
+div.find ul li {
 	min-height: 45px;
 	border: 1px solid #ddd;
 	margin-bottom: 10px;
@@ -224,6 +224,6 @@ span.date, span.time{
 	float: right;
 }
 
-div.find > div > p { 
+div.find li p { 
 	margin-top: 5px;
 }

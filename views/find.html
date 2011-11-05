@@ -3,15 +3,22 @@
 <div class="find">
 	<h2>Noms</h2>
 	<form id="find_search" >
-		<input id="search_box" type="text">
+		<input id="find_search_box" type="text">
 	</form>
-	{% for report in reports %}
-	<div>
-		<span class="location">{{ report.location }}</span>
-		<span class="time">{{ report.date|date:"f A" }}</span>
-		<span class="date">{{ report.date|date:"M j"}}</span>
-		<p>{{ report.description }}</p>
-	</div>
-	{% endfor %}
+	<ul id="reports">
+		{% for report in reports %}
+		<li>
+			<span class="location">{{ report.location }}</span>
+			<span class="time">{{ report.date|date:"f A" }}</span>
+			<span class="date">{{ report.date|date:"M j"}}</span>
+			{# <p>{{ report.description }}</p> #}
+			<p>
+				{% for spotted in report.foods %}
+					<span>{{ spotted.food.name }} </span>
+				{% endfor %}
+			</p>
+		</li>
+		{% endfor %}
+	<ul>
 </div>
 {% endblock %}

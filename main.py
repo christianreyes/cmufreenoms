@@ -47,6 +47,20 @@ class Spotted(db.Model):
 	                              required=False,
 	                              collection_name="foods")
 
+class AddFoodHandler(webapp.RequestHandler):
+	def get(self):
+		foods = ['Pizza', 'Cake', 'Cupcakes', 'Soda', 'Pancake']
+		
+		for food in foods:
+			exists = Food.all().filter('name =', food).fetch(1)
+			if len(exists) < 1:
+				f = Food(name = food)
+				f.put()
+				self.response.out.write(f.name + " added <br>") 
+			else:
+				self.response.out.write(food + " already exists <br>") 
+			
+
 def basePrepPage(request):
 	template_values = {}
 
@@ -83,6 +97,16 @@ class ReportHandler(webapp.RequestHandler):
 		                location = location, 
 		                user = user)
 		report.put()
+		
+		selected_foods = cgi.escape(self.request.get("selected_foods"))
+
+		ids = selected_foods.split(",")
+		
+		for i in ids:
+			f = Food.get_by_id(int(i))
+			s = Spotted(report = report, food = f)
+			s.put()
+		
 		self.redirect("/find")
 		
 class FindHandler(webapp.RequestHandler):
@@ -117,12 +141,14 @@ class FoodsJSONHandler(webapp.RequestHandler):
 		self.response.headers['Content-Type'] = 'application/json'
 		self.response.out.write(simplejson.dumps(to_json))
 
+
 def main():
 	routes = [
 	          ('/', MainHandler), 
-	          ('/report', ReportHandler),
-              ('/find', FindHandler),
-              ('/foods.json', FoodsJSONHandler)
+	          ('/report/?', ReportHandler),
+              ('/find/?.*', FindHandler),
+              ('/foods.json', FoodsJSONHandler),
+              ('/add_food', AddFoodHandler)
 	         ]
 	application = webapp.WSGIApplication(routes, debug=True)
 	util.run_wsgi_app(application)
