@@ -35,9 +35,9 @@ function searchKeyPressed(element){
 	var search_val = $(element).val();
 	
 	if(search_val != ""){
-		document.title = 'Free Noms! - Find  "' + search_val + '"';
+		document.title = 'FREE NOMS! - Find  "' + search_val + '"';
 	} else {
-		document.title = 'Free Noms! - Find';
+		document.title = 'FREE NOMS! - Find';
 	}
 
 	updateSearchURL(search_val);
