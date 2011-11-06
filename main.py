@@ -80,9 +80,21 @@ class MainHandler(webapp.RequestHandler):
 	
 		path = templatePath('views/home.html')
 		self.response.out.write(template.render(path,template_values))
+		
+class LoginHandler(webapp.RequestHandler):
+    def get(self):
+		template_values = basePrepPage(self.request)
+		template_values["login_url"] = users.create_login_url(self.request.uri)
+
+		path = templatePath('views/login.html')
+		self.response.out.write(template.render(path,template_values))
 
 class ReportHandler(webapp.RequestHandler):
 	def get(self):
+		user = users.get_current_user()
+		if not user:
+			self.redirect("/login/report")
+		
 		template_values = basePrepPage(self.request)
 
 		path = templatePath('views/report.html')
@@ -145,6 +157,7 @@ class FoodsJSONHandler(webapp.RequestHandler):
 def main():
 	routes = [
 	          ('/', MainHandler), 
+	          ('/login/?.*', LoginHandler),
 	          ('/report/?', ReportHandler),
               ('/find/?.*', FindHandler),
               ('/foods.json', FoodsJSONHandler),

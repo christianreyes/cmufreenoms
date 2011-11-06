@@ -12,7 +12,7 @@ a {
 }
 
 a:hover {
-	color: blue;
+	color: #4b98ce;
 	text-decoration: underline;
 }
 
@@ -22,13 +22,17 @@ div#header_container {
 	background-color: #333;
 }
 
-h1 a{
+h1 a, a.logout{
 	color: white;
 }
 
 h1 a:hover{
 	text-decoration: none;
 	color: white;
+}
+
+a {
+	color: #4b98ce;
 }
 
 div#header {
@@ -70,10 +74,6 @@ span.separator {
 	margin-left: 2px;
 	margin-right: 2px;
 	font-size: smaller;
-}
-
-a.logout {
-	color: white;
 }
 
 #menu_container{
@@ -122,7 +122,7 @@ a.logout {
 #menu a:hover {
 	/*-moz-border-radius: 10px 10px 0px 0px;
     border-radius: 10px 10px 0px 0px;*/
-	color: white;
+	color: #A4F2FF;
 	background-color: black;
 	text-decoration: none;
 }
@@ -169,7 +169,7 @@ img.instructions:hover {
 	outline: 2px solid #333;
 }
 
-div.report {
+div.report, div.login {
 	border: 1px solid #ddd;
 	padding: 12px;
 }
@@ -235,4 +235,14 @@ span.date, span.time{
 
 div.find li p { 
 	margin-top: 5px;
+}
+
+div.login p{
+	text-align: center;
+	margin-bottom: 12px;
+}
+
+img.sorry {
+	display: block;
+	margin: 10px auto 20px;
 }
