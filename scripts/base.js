@@ -18,6 +18,7 @@ $(function(){
 		setTimeout(function(){ searchKeyPressed(element); }, 1);
 	});
 	var path = window.location.pathname; 
+	var path = decodeURIComponent(path);
 	var matchData = path.match(/\/find\/(.*)/);
 	
 	if(matchData != null){
@@ -53,7 +54,7 @@ function filterReports(searchVal){
 	
 	$.each(reports, function(index, value){
 		var val = $(value);
-		if(value.innerText.toLowerCase().match(searchRegExp)){
+		if(value.textContent.toLowerCase().match(searchRegExp)){
 			val.show();
 		} else {
 			val.hide();

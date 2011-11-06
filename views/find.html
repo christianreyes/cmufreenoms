@@ -2,14 +2,17 @@
 {% block headtitle %} - Find{% endblock %}
 {% block content %}
 <div class="find">
-	<h2>Noms</h2>
-	<form id="find_search" >
-		<input id="find_search_box" type="text">
-	</form>
+	<div>
+		<h2>Noms</h2>
+		<form id="find_search" >
+			<label for="find_search_box">Search:</label>
+			<input id="find_search_box" type="text">
+		</form>
+	</div>
 	<ul id="reports">
 		{% for report in reports %}
 		<li>
-			<span class="location">{{ report.location }}</span>
+			<a class="location" href="/find/{{ report.location }}">{{ report.location }}</a>
 			<span class="time">{{ report.date|date:"f A" }}</span>
 			<span class="date">{{ report.date|date:"M j"}}</span>
 			{# <p>{{ report.description }}</p> #}
