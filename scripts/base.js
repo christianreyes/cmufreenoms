@@ -17,11 +17,28 @@ $(function(){
 		element = this;
 		setTimeout(function(){ searchKeyPressed(element); }, 1);
 	});
+	var path = window.location.pathname; 
+	var matchData = path.match(/\/find\/(.*)/);
+	
+	if(matchData != null){
+		$("#find_search_box").val(matchData[1]);
+		filterReports(matchData[1]);
+	} else {
+		if(path.match(/^\/find$/)){
+			window.history.pushState(null,null,"/find");
+		}
+	}
 });
 
 function searchKeyPressed(element){
 	var search_val = $(element).val();
 	
+	if(search_val != ""){
+		document.title = 'Free Noms! - Find  "' + search_val + '"';
+	} else {
+		document.title = 'Free Noms! - Find';
+	}
+
 	updateSearchURL(search_val);
 	filterReports(search_val);
 }
