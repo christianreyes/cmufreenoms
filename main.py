@@ -133,7 +133,8 @@ class ReportHandler(webapp.RequestHandler):
 		
 class FindHandler(webapp.RequestHandler):
     def get(self):
-		redirectToLoginIfNoUser(self, "find")
+		destination = re.search("(find.*)", self.request.uri)
+		redirectToLoginIfNoUser(self, destination.group(1))
 	
 		template_values = basePrepPage(self.request)
 
