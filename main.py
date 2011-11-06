@@ -19,6 +19,7 @@ import cgi
 import datetime
 import os
 import re
+import logging
 import time
 from pytz import timezone
 import pytz
@@ -83,17 +84,26 @@ class MainHandler(webapp.RequestHandler):
 		
 class LoginHandler(webapp.RequestHandler):
     def get(self):
+		user = users.get_current_user()
+		if user:
+			destination = re.search("/login(/.*)", self.request.uri)
+			if destination:
+				self.redirect(destination.group(1))
+				
 		template_values = basePrepPage(self.request)
 		template_values["login_url"] = users.create_login_url(self.request.uri)
 
 		path = templatePath('views/login.html')
 		self.response.out.write(template.render(path,template_values))
 
+def redirectToLoginIfNoUser(handler, destination):
+	user = users.get_current_user()
+	if not user:
+		handler.redirect("/login/" + destination)
+
 class ReportHandler(webapp.RequestHandler):
 	def get(self):
-		user = users.get_current_user()
-		if not user:
-			self.redirect("/login/report")
+		redirectToLoginIfNoUser(self, "report")
 		
 		template_values = basePrepPage(self.request)
 
@@ -123,6 +133,8 @@ class ReportHandler(webapp.RequestHandler):
 		
 class FindHandler(webapp.RequestHandler):
     def get(self):
+		redirectToLoginIfNoUser(self, "find")
+	
 		template_values = basePrepPage(self.request)
 
 		twenty_four_hours =  datetime.datetime.now() - datetime.timedelta(days=1)
