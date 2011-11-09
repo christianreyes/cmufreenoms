@@ -15,14 +15,17 @@
 			<a class="location" href="/find/{{ report.location }}">{{ report.location }}</a>
 			<span class="time">{{ report.date|date:"f A" }}</span>
 			<span class="date">{{ report.date|date:"M j"}}</span>
-			{# <p>{{ report.description }}</p> #}
+			<p class="description">{{ report.description }}</p>
+			<!--
 			<p>
 				{% for spotted in report.foods %}
 					<span>{{ spotted.food.name }} </span>
 				{% endfor %}
 			</p>
+			 -->
 		</li>
 		{% endfor %}
-	<ul>
+	</ul>
+	<p id="no_results" class="hidden">Sorry, there are no reports which meet the search constraints. :' (</p>
 </div>
 {% endblock %}

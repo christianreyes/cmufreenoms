@@ -1,24 +1,58 @@
 // Handler for .ready() called.
 $(function(){	
 	highlight_current_tab();
+		
+	var descriptions = $('#reports .description');
+	descriptions.each(function(index, description){
+		description = $(description);
+		var description_words = description.text().split(" ");
 	
-	/*
-	$("input#foods").tokenInput("/foods.json", {
-		preventDuplicates : true,
-		onAdd : function(){
-			setHiddenValues();
-		},
-		onRemove: function(){
-			setHiddenValues();
+		for(var i=0 ; i < description_words.length; i++){
+			var hash_word = description_words[i];
+		
+			if(hash_word.match(/#.*/)){
+				var word = hash_word.substring(1,hash_word.length);
+				var tag_link = $('<a class="tagged_food"></a>');
+				tag_link.attr("href", "/find/" + word); 
+				tag_link.text(hash_word);
+				description_words[i] = tag_link[0].outerHTML;
+				
+			}
 		}
+		description.html(description_words.join(" "));
+		$('#reports .description .tagged_food').click(function(e){
+			searchKeyPressed(e, $(this).attr('href').match(/find\/(.*)/)[1]);
+			setSearchText();
+			return false;
+		});
 	});
-	*/
+	
+	$('#reports .location').click(function(e){
+		searchKeyPressed(e, $(this).attr('href').match(/find\/(.*)/)[1]);
+		setSearchText();
+		return false;
+	});
 	
 	$('#find_search_box').bind("keydown", function(e){
 		element = this;
-		setTimeout(function(){ searchKeyPressed(e,element); }, 1);
+		setTimeout(function(){ searchKeyPressed(e,$(element).val()); }, 1);
 	});
 	
+	setSearchText();
+	displayNoticeIfNone();
+});
+
+function displayNoticeIfNone(){
+	var visible = $('#reports li.visible');
+	var no_results = $('#no_results');
+	if(visible.length == 0){
+		no_results.removeClass("hidden");
+	} else {
+		no_results.addClass("hidden");
+	}
+}
+
+function setSearchText(){
 	var path = window.location.pathname; 
 	var path = decodeURIComponent(path);
 	var matchData = path.match(/\/find\/(.*)/);
@@ -31,11 +65,9 @@ $(function(){
 			window.history.pushState(null,null,"/find");
 		}
 	}
-});
+}
 
-function searchKeyPressed(element){
-	var search_val = $(element).val();
-	
+function searchKeyPressed(e, search_val){
 	if(search_val != ""){
 		document.title = 'FREE NOMS! - Find  "' + search_val + '"';
 	} else {
@@ -44,6 +76,7 @@ function searchKeyPressed(element){
 
 	updateSearchURL(search_val);
 	filterReports(search_val);
+	displayNoticeIfNone();
 }
 
 function updateSearchURL(val){
@@ -57,9 +90,11 @@ function filterReports(searchVal){
 	$.each(reports, function(index, value){
 		var val = $(value);
 		if(value.textContent.toLowerCase().match(searchRegExp)){
-			val.show();
+			val.removeClass("hidden");
+			val.addClass("visible")
 		} else {
-			val.hide();
+			val.addClass("hidden");
+			val.removeClass("visible")
 		}
 	});
 }

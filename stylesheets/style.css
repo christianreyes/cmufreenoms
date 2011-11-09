@@ -131,6 +131,15 @@ span.separator {
 	text-decoration: none;
 }
 
+.hidden {
+	display: none;
+}
+
+#no_results{
+	text-align: center;
+	margin: 60px;
+}
+
 div.report label {
 	width: 90px;
 	display: inline-block;
@@ -251,4 +260,8 @@ div.login p{
 img.sorry {
 	display: block;
 	margin: 50px auto 70px;
+}
+
+.tagged_food {
+	color: green;
 }
