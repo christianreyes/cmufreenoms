@@ -15,30 +15,37 @@
 # limitations under the License.
 #
 
-import cgi
-import datetime
-import os
-import re
-import logging
-import time
-from pytz import timezone
-import pytz
-from pytz import gae
-from django.utils import simplejson
-from google.appengine.ext import db
-from google.appengine.api import users
-from google.appengine.ext import webapp
-from google.appengine.ext.webapp import util
-from google.appengine.ext.webapp import template
 
+import cgi			# module for escaping out text
+import datetime		# module for working with datetimes
+import os			# module for working with the OS
+import re			# module for regular expressions
+import logging		# module for debugging and logging
+import time			# module for working with time
+from pytz import timezone	# module for working with timezones
+import pytz					# module for working with timezones
+from pytz import gae		# module for working with timezones in Google App Engine
+from django.utils import simplejson		# django module for JSON
+from google.appengine.ext import db		# Google App Engine Datastore
+from google.appengine.api import users	# Google App Engine User (Google Account)
+from google.appengine.ext import webapp	# Google App Engine App
+from google.appengine.ext.webapp import util		# Google App Engine App
+from google.appengine.ext.webapp import template	# Django templates
+
+###########################################################
+# 						Models
+###########################################################
+
+# Model for Food
 class Food(db.Model):
     name = db.StringProperty()
 
+# Model for Report
 class Report(db.Model):
 	description = db.StringProperty()
 	location = db.StringProperty()
-	date = db.DateTimeProperty(auto_now_add = True)
-	user = db.UserProperty()
+	date = db.DateTimeProperty(auto_now_add = True) # automatically set date to now when created
+	user = db.UserProperty() # Google Account User
 
 class Spotted(db.Model):
 	food = db.ReferenceProperty(Food,
@@ -47,21 +54,14 @@ class Spotted(db.Model):
 	report = db.ReferenceProperty(Report,
 	                              required=False,
 	                              collection_name="foods")
-
-class AddFoodHandler(webapp.RequestHandler):
-	def get(self):
-		foods = ['Pizza', 'Cake', 'Cupcakes', 'Soda', 'Pancake']
-		
-		for food in foods:
-			exists = Food.all().filter('name =', food).fetch(1)
-			if len(exists) < 1:
-				f = Food(name = food)
-				f.put()
-				self.response.out.write(f.name + " added <br>") 
-			else:
-				self.response.out.write(food + " already exists <br>") 
+				
+###########################################################
+# 						Helpers
+###########################################################
 			
-
+# given a request for a page, check if the user is logged in.
+# if yes, populate user_nickname and logout_url in template_values
+# it not, populate login_url in template values
 def basePrepPage(request):
 	template_values = {}
 
@@ -74,83 +74,123 @@ def basePrepPage(request):
 		template_values["login_url"] = users.create_login_url(request.uri)
 		
 	return template_values
+	
+# returns the absolute path from the relative path. needed for templates
+def templatePath(path):
+    return os.path.join(os.path.dirname(__file__), path)
 
+# if no user is present, redirect to /login/destination .
+def redirectToLoginIfNoUser(handler, destination):
+	user = users.get_current_user()
+	if not user:
+		handler.redirect("/login/" + destination) # if no user, redirect to login
+		
+# Google App Engine does not store the timezone of datetimes. ALl are stored as "UTC".
+# Datetimes must be converted back from "UTC" to "US/Eastern"
+def fromUTC(date,tz):
+    utc = pytz.timezone('UTC')
+    d_tz = utc.normalize(date)
+    localetime = d_tz.astimezone(tz)
+    return localetime
+
+###########################################################
+# 						Handlers
+###########################################################
+
+# Handles requests to "/" 
 class MainHandler(webapp.RequestHandler):
     def get(self):
+		# determines if user is logged in. (user does not have to be to view page)
 		template_values = basePrepPage(self.request)
-	
+		
+		# use the home template (which extends base)
 		path = templatePath('views/home.html')
 		self.response.out.write(template.render(path,template_values))
-		
+
+# Handles requests to "/" 		
 class LoginHandler(webapp.RequestHandler):
     def get(self):
 		user = users.get_current_user()
 		if user:
+			# /login/report -> /report is the destination
 			destination = re.search("/login(/.*)", self.request.uri)
 			if destination:
-				self.redirect(destination.group(1))
-				
+				self.redirect(destination.group(1)) #redirect to destination if there is one
+			else:
+				self.redirect("/") #if no destination and already logged in, redirect to home
+		
+		# prep page based on login
 		template_values = basePrepPage(self.request)
-		template_values["login_url"] = users.create_login_url(self.request.uri)
 
+		# use the login template (which extends base)
 		path = templatePath('views/login.html')
 		self.response.out.write(template.render(path,template_values))
 
-def redirectToLoginIfNoUser(handler, destination):
-	user = users.get_current_user()
-	if not user:
-		handler.redirect("/login/" + destination)
-
+# Handles requests to "/report" 		
 class ReportHandler(webapp.RequestHandler):
 	def get(self):
-		redirectToLoginIfNoUser(self, "report")
-		
+		redirectToLoginIfNoUser(self, "report") # if no user, redirect to "/login/report"
+				
+		# prep page based on login
 		template_values = basePrepPage(self.request)
 
+		# use the report template (which extends base)
 		path = templatePath('views/report.html')
 		self.response.out.write(template.render(path,template_values))
 		
+	# form sends a post request to "/report"
 	def post(self):
-		description = cgi.escape(self.request.get("description"))
-		location = cgi.escape(self.request.get("location"))
-		user = users.get_current_user()
+		# escape the text in the fields
+		description = cgi.escape(self.request.get("description"))	# description field from form
+		location = cgi.escape(self.request.get("location"))			# location field from form
+		user = users.get_current_user()								# logged in user
 		
+		# make a new report from the form data
 		report = Report(description = description, 
 		                location = location, 
 		                user = user)
 		report.put()
 		
-		selected_foods = cgi.escape(self.request.get("selected_foods"))
+		#selected_foods = cgi.escape(self.request.get("selected_foods"))
 
-		ids = selected_foods.split(",")
+		#ids = selected_foods.split(",")
 		
-		for i in ids:
-			f = Food.get_by_id(int(i))
-			s = Spotted(report = report, food = f)
-			s.put()
+		#for i in ids:
+		#	f = Food.get_by_id(int(i))
+		#	s = Spotted(report = report, food = f)
+		#	s.put()
 		
+		
+		# redirect user to the "/find" page after the report is saved
 		self.redirect("/find")
 		
+# Handles requests to '/find/?.*'	e.g. '/find/pizza'
 class FindHandler(webapp.RequestHandler):
+	# user has the page bookmarked or is directly performing search by modifying url
     def get(self):
-		destination = re.search("(find.*)", self.request.uri)
-		redirectToLoginIfNoUser(self, destination.group(1))
+		destination = re.search("(find/?.*)", self.request.uri) # search for (find/.*) in the url
+		redirectToLoginIfNoUser(self, destination.group(1))	   	# redirect to login if not logged in
 	
+		# prep page based on login
 		template_values = basePrepPage(self.request)
 
+		# only show reports from <= 24 hours ago
 		twenty_four_hours =  datetime.datetime.now() - datetime.timedelta(days=1)
 		reports = Report.all().filter('date >=', twenty_four_hours).order("-date").fetch(1000)
-
+		
+		# if there are reports <= 24 hours ago
 		if reports:
+			EST = timezone('US/Eastern')
 			for report in reports:
-				EST = timezone('US/Eastern')
-				report.date = fromUTC(report.date.replace(tzinfo=EST), 'US/Eastern' )
+				report.date = fromUTC(report.date.replace(tzinfo=EST), EST ) # transform date
 	
 		template_values["reports"] = reports
 
+		# use the find template (which extends base)
 		path = templatePath('views/find.html')
 		self.response.out.write(template.render(path,template_values))
 		
+# Route for getting a JSON representation of all foods in datastore
 class FoodsJSONHandler(webapp.RequestHandler):
     def get(self):
 		query = self.request.query_string[2:].lower()
@@ -166,42 +206,40 @@ class FoodsJSONHandler(webapp.RequestHandler):
 		self.response.headers['Content-Type'] = 'application/json'
 		self.response.out.write(simplejson.dumps(to_json))
 
+# Route for adding a "default" set of Foods
+class AddFoodHandler(webapp.RequestHandler):
+	def get(self):
+		foods = ['Pizza', 'Cake', 'Cupcakes', 'Soda', 'Pancake']
+
+		for food in foods:
+			exists = Food.all().filter('name =', food).fetch(1)
+			if len(exists) < 1:
+				f = Food(name = food)
+				f.put()
+				self.response.out.write(f.name + " added <br>") 
+			else:
+				self.response.out.write(food + " already exists <br>")
+
+###########################################################
+# 				  Google App Engine Main
+###########################################################
 
 def main():
+	# routes that the application will handle
 	routes = [
-	          ('/', MainHandler), 
-	          ('/login/?.*', LoginHandler),
-	          ('/report/?', ReportHandler),
-              ('/find/?.*', FindHandler),
-              ('/foods.json', FoodsJSONHandler),
-              ('/add_food', AddFoodHandler)
+	          ('/', MainHandler), 			# "/"
+	          ('/login/?.*', LoginHandler), # "/login", "/login/report", "/login/find/pizza"
+	          ('/report/?', ReportHandler), # "/report"
+              ('/find/?.*', FindHandler),	# "/find", "/find/pizza"
+              ('/foods.json', FoodsJSONHandler), # "/foods.json"
+              ('/add_food', AddFoodHandler)		 # "/add_food"
 	         ]
 	application = webapp.WSGIApplication(routes, debug=True)
 	util.run_wsgi_app(application)
-
-def templatePath(path):
-    return os.path.join(os.path.dirname(__file__), path)
-    
-# "US/Eastern"
-def toUTC(date,tz):
-    tz = timezone(tz)
-    utc = pytz.timezone('UTC')
-    d_tz = tz.normalize(tz.localize(date))
-    d_utc = d_tz.astimezone(utc)
-    return d_utc
-
-def fromUTC(date,tz):
-    tz = timezone(tz)
-    utc = pytz.timezone('UTC')
-    d_tz = utc.normalize(date)
-    localetime = d_tz.astimezone(tz)
-    return localetime
-
-def convert2EST(date, time, tzone):
-    dt = datetime.datetime.strptime(date+time, '%Y%m%d%H:%M:%S')
-    tz = pytz.timezone(tzone)
-    dt = tz.localize(dt)
-    return dt.astimezone(EST)
+	
+###########################################################
+# 				    Python Engine Main
+###########################################################
     
 if __name__ == '__main__':
     main()

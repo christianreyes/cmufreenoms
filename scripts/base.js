@@ -2,6 +2,7 @@
 $(function(){	
 	highlight_current_tab();
 	
+	/*
 	$("input#foods").tokenInput("/foods.json", {
 		preventDuplicates : true,
 		onAdd : function(){
@@ -11,12 +12,13 @@ $(function(){
 			setHiddenValues();
 		}
 	});
-	 
+	*/
 	
 	$('#find_search_box').bind("keydown", function(e){
 		element = this;
-		setTimeout(function(){ searchKeyPressed(element); }, 1);
+		setTimeout(function(){ searchKeyPressed(e,element); }, 1);
 	});
+	
 	var path = window.location.pathname; 
 	var path = decodeURIComponent(path);
 	var matchData = path.match(/\/find\/(.*)/);
