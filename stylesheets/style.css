@@ -140,6 +140,24 @@ span.separator {
 	margin: 60px;
 }
 
+#slider {
+	display:inline-block;
+	position: absolute;
+	top: 27px;
+	left: 110px;
+	width: 150px;
+}
+
+#slider_info {
+	position: absolute;
+	top: 26px;
+	left: 280px;
+}
+
+#num_hours {
+	color: green;
+}
+
 div.report label {
 	width: 90px;
 	display: inline-block;

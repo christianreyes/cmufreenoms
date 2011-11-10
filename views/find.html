@@ -8,13 +8,16 @@
 			<label for="find_search_box">Search:</label>
 			<input id="find_search_box" type="text">
 		</form>
+		<div id="slider"></div>
+		<div id="slider_info">&lt; <span id="num_hours">2</span> Hours</div>
 	</div>
 	<ul id="reports">
 		{% for report in reports %}
-		<li>
+		<li class="visible">
 			<a class="location" href="/find/{{ report.location }}">{{ report.location }}</a>
 			<span class="time">{{ report.date|date:"f A" }}</span>
 			<span class="date">{{ report.date|date:"M j"}}</span>
+			<span class="full_date hidden">{{ report.date }}</span>
 			<p class="description">{{ report.description }}</p>
 			<!--
 			<p>

@@ -38,8 +38,22 @@ $(function(){
 		setTimeout(function(){ searchKeyPressed(e,$(element).val()); }, 1);
 	});
 	
+	$('#num_hours').text(2);
+	
+	$('#slider').slider({
+		value: 2,
+		min: 1,
+		max: 5,
+		step: 1,
+		slide: function(event, ui){
+			$('#num_hours').text(ui.value);
+			filterReports($('#find_search_box').val());
+		}
+	});
+	
+	
 	setSearchText();
-	displayNoticeIfNone();
+	
 });
 
 function displayNoticeIfNone(){
@@ -76,41 +90,38 @@ function searchKeyPressed(e, search_val){
 
 	updateSearchURL(search_val);
 	filterReports(search_val);
+}
+
+function filterReports(searchVal){	
+	var searchRegExp = new RegExp(searchVal.toLowerCase());
+	var hours = parseInt($('#num_hours').text());
+	var deltaHours_ms = hours * 60 * 60 * 1000;
+	
+	$('ul#reports li').each(function(index, value){
+		var report = $(value);		
+		var date = Date.parse($(".full_date", report).text());
+		var diff = Date.now() - date;
+		
+		var pass_search = true;
+		if(searchVal != ""){
+			pass_search = report.text().toLowerCase().match(searchRegExp);
+		}
+		var pass_date = diff <= deltaHours_ms;
+		
+		if(pass_search && pass_date){
+			report.removeClass("hidden");
+			report.addClass("visible")
+		} else {
+			report.addClass("hidden");
+			report.removeClass("visible")
+		}
+	});
+	
 	displayNoticeIfNone();
 }
 
 function updateSearchURL(val){
 	window.history.replaceState(val, val, "/find/" + val );
-}
-
-function filterReports(searchVal){
-	var searchRegExp = new RegExp(searchVal.toLowerCase());
-	var reports = $('ul#reports li');
-	
-	$.each(reports, function(index, value){
-		var val = $(value);
-		if(value.textContent.toLowerCase().match(searchRegExp)){
-			val.removeClass("hidden");
-			val.addClass("visible")
-		} else {
-			val.addClass("hidden");
-			val.removeClass("visible")
-		}
-	});
-}
-
-function setHiddenValues(){
-	var ids = [];
-	
-	var tokens = $("input#foods").tokenInput("get");
-	
-	for(var i=0; i<tokens.length ; i++){
-		var token = tokens[i];
-		
-		ids.push(token.id);
-	}
-	
-	$("input#selected_foods").val(ids)
 }
 
 function highlight_current_tab(){
