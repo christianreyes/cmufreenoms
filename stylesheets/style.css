@@ -293,3 +293,7 @@ img.sorry {
     color: #e46c6e;  
 	margin-left: 10px;
 }
+
+.report p {
+	margin-bottom: 20px;
+}

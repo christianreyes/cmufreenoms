@@ -25,7 +25,6 @@ import time			# module for working with time
 from pytz import timezone	# module for working with timezones
 import pytz					# module for working with timezones
 from pytz import gae		# module for working with timezones in Google App Engine
-from django.utils import simplejson		# django module for JSON
 from google.appengine.ext import db		# Google App Engine Datastore
 from google.appengine.api import users	# Google App Engine User (Google Account)
 from google.appengine.ext import webapp	# Google App Engine App
@@ -36,24 +35,12 @@ from google.appengine.ext.webapp import template	# Django templates
 # 						Models
 ###########################################################
 
-# Model for Food
-class Food(db.Model):
-    name = db.StringProperty()
-
 # Model for Report
 class Report(db.Model):
 	description = db.StringProperty()
 	location = db.StringProperty()
 	date = db.DateTimeProperty(auto_now_add = True) # automatically set date to now when created
 	user = db.UserProperty() # Google Account User
-
-class Spotted(db.Model):
-	food = db.ReferenceProperty(Food,
-	                            required=False,
-	                            collection_name="reports")
-	report = db.ReferenceProperty(Report,
-	                              required=False,
-	                              collection_name="foods")
 				
 ###########################################################
 # 						Helpers
@@ -189,36 +176,35 @@ class FindHandler(webapp.RequestHandler):
 		# use the find template (which extends base)
 		path = templatePath('views/find.html')
 		self.response.out.write(template.render(path,template_values))
-		
-# Route for getting a JSON representation of all foods in datastore
-class FoodsJSONHandler(webapp.RequestHandler):
-    def get(self):
-		query = self.request.query_string[2:].lower()
-		
-		foods = Food.all().order("name").fetch(1000)
-		
-		to_json = []
-		
-		for food in foods:
-			if(query == "" or re.match(query, food.name.lower())):
-				to_json.append({ "id" : food.key().id() , "name" : food.name})
-		
-		self.response.headers['Content-Type'] = 'application/json'
-		self.response.out.write(simplejson.dumps(to_json))
 
 # Route for adding a "default" set of Foods
-class AddFoodHandler(webapp.RequestHandler):
+class AddDataHandler(webapp.RequestHandler):
 	def get(self):
-		foods = ['Pizza', 'Cake', 'Cupcakes', 'Soda', 'Pancake']
-
-		for food in foods:
-			exists = Food.all().filter('name =', food).fetch(1)
-			if len(exists) < 1:
-				f = Food(name = food)
-				f.put()
-				self.response.out.write(f.name + " added <br>") 
-			else:
-				self.response.out.write(food + " already exists <br>")
+		descriptions = ["#brownies and #cookies for freshman",
+		                "#pizza and #soda . All majors welcome",
+		                "#candy and #ice_cream while watching movies",
+		                "#hot_pockets and #smores"];
+		locations = ["HCII Lounge",
+		             "GHC 6615",
+		             "PH 226B",
+		             "UC Black Chairs"];
+		times = [ datetime.datetime.now(),
+		          datetime.datetime.now() - datetime.timedelta(hours=1),
+		          datetime.datetime.now() - datetime.timedelta(hours=2),
+				  datetime.datetime.now() - datetime.timedelta(hours=3)]
+		
+		for i in range(len(descriptions)):
+			r = Report(description = descriptions[i],
+                       location = locations[i],
+                       date = times[i])
+			r.put()
+			self.response.out.write("<h3>Added report</h3>")
+			self.response.out.write("<ul>") 
+			self.response.out.write("	<li>Description: " + r.description + "</li>")
+			self.response.out.write("	<li>Location: " + r.location + "</li>")
+			self.response.out.write("	<li>Date: " + r.date.strftime("%b %d - %I:%M %p") + " UTC</li>")
+			self.response.out.write("</ul>")
+			self.response.out.write("<br>")
 
 ###########################################################
 # 				  Google App Engine Main
@@ -231,8 +217,7 @@ def main():
 	          ('/login/?.*', LoginHandler), # "/login", "/login/report", "/login/find/pizza"
 	          ('/report/?', ReportHandler), # "/report"
               ('/find/?.*', FindHandler),	# "/find", "/find/pizza"
-              ('/foods.json', FoodsJSONHandler), # "/foods.json"
-              ('/add_food', AddFoodHandler)		 # "/add_food"
+              ('/add_data', AddDataHandler)		 # "/add_food"
 	         ]
 	application = webapp.WSGIApplication(routes, debug=True)
 	util.run_wsgi_app(application)

@@ -19,13 +19,6 @@
 			<span class="date">{{ report.date|date:"M j"}}</span>
 			<span class="full_date hidden">{{ report.date }}</span>
 			<p class="description">{{ report.description }}</p>
-			<!--
-			<p>
-				{% for spotted in report.foods %}
-					<span>{{ spotted.food.name }} </span>
-				{% endfor %}
-			</p>
-			 -->
 		</li>
 		{% endfor %}
 	</ul>
