@@ -283,3 +283,13 @@ img.sorry {
 .tagged_food {
 	color: green;
 }
+
+.report_form input.error{  
+    background: #f8dbdb;  
+    border-color: #e77776;  
+}
+
+.report_form span.error{  
+    color: #e46c6e;  
+	margin-left: 10px;
+}

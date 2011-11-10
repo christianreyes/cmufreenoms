@@ -3,16 +3,15 @@
 {% block content %}
 <div class="report">
 	<h2>Report Free Noms</h2>
-	<form action="/report" method="post">
+	<form class="report_form" action="/report" method="post">
 		<div>
 			<label for="description"/>Description:</label>
-			<input id="description" type="text" name="description"/>
+			<input id="description" type="text" name="description"/><span id="descriptionInfo"></span>
 		</div>
 		<div>
 			<label for="location"/>Location:</label>
-			<input id="location" type="text" name="location"/>
+			<input id="location" type="text" name="location"/><span id="locationInfo"></span>
 		</div>
-		<input type="hidden" id="selected_foods" name="selected_foods">
 		<input id="submit" type="submit" value="Report!">
 	</form>
 </div>
