@@ -9,9 +9,9 @@ $(function(){
 	
 		for(var i=0 ; i < description_words.length; i++){
 			var hash_word = description_words[i];
-		
-			if(hash_word.match(/#.*/)){
-				var word = hash_word.substring(1,hash_word.length);
+			var match_data = hash_word.match(/#([\w\d]*)/);
+			if(match_data){
+				var word = match_data[1];
 				var tag_link = $('<a class="tagged_food"></a>');
 				tag_link.attr("href", "/find/" + word); 
 				tag_link.text(hash_word);
@@ -53,7 +53,7 @@ $(function(){
 	
 	
 	setSearchText();
-	
+	filterReports($('#find_search_box').val())
 });
 
 function displayNoticeIfNone(){
