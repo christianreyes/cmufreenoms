@@ -297,3 +297,7 @@ img.sorry {
 .report p {
 	margin-bottom: 20px;
 }
+
+.green {
+	color: green;
+}

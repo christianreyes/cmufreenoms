@@ -138,16 +138,6 @@ class ReportHandler(webapp.RequestHandler):
 		                user = user)
 		report.put()
 		
-		#selected_foods = cgi.escape(self.request.get("selected_foods"))
-
-		#ids = selected_foods.split(",")
-		
-		#for i in ids:
-		#	f = Food.get_by_id(int(i))
-		#	s = Spotted(report = report, food = f)
-		#	s.put()
-		
-		
 		# redirect user to the "/find" page after the report is saved
 		self.redirect("/find")
 		
@@ -177,7 +167,7 @@ class FindHandler(webapp.RequestHandler):
 		path = templatePath('views/find.html')
 		self.response.out.write(template.render(path,template_values))
 
-# Route for adding a "default" set of Foods
+# Route for adding a "default" set of reports.
 class AddDataHandler(webapp.RequestHandler):
 	def get(self):
 		descriptions = ["#brownies and #cookies for freshman",
