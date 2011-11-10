@@ -17,6 +17,12 @@ Students need to have a Google Account in order to post reports or to find food.
 
 The application redirects the user to the intended destination once the user has logged in. For example, the user is not logged in and attempts to visit /report . The application redirects the user to the login page to login, then redirects the user to /report as a logged in user.
 
+Adding test data:
+
+http://cmufreenoms.appspot.com/add_data
+
+Four reports will be added with times which will be convenient to demonstrate the slider filter capabilities. Also use the search capabilities.
+
 Links:
 
 Reporting a food:	http://cmufreenoms.appspot.com/report
